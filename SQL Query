@@ -1,0 +1,209 @@
+-- create database employee
+CREATE DATABASE employee;
+
+-- hobby: id, name
+CREATE TABLE employee.hobby (
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    name VARCHAR(250)
+);
+
+-- employee: id, first_name, last_name, age, mobile_number, address
+CREATE TABLE employee.employee (
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    first_name VARCHAR(250),
+    last_name VARCHAR(250),
+    age INT,
+    mobile_number VARCHAR(20),
+    address VARCHAR(250)
+);
+
+-- employee_salary: id, foreign key of employee, salary, date
+CREATE TABLE employee.employee_salary (
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    employee_id INT,
+    FOREIGN KEY (employee_id)
+        REFERENCES employee.employee (id),
+    salary INT,
+    date DATETIME
+);
+
+-- employee_hobby: id, foreign key of the employee, foreign key of hobby
+CREATE TABLE employee.employee_hobby (
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    employee_id INT,
+    FOREIGN KEY (employee_id)
+        REFERENCES employee.employee (id),
+    hobby_id INT,
+    FOREIGN KEY (hobby_id)
+        REFERENCES employee.hobby (id)
+);
+
+-- Insert multiple data in hobby table.
+INSERT INTO employee.hobby(name)
+VALUES
+("Playing"),
+("Dancing"),
+("Singing"),
+("Traveling"),
+("Teaching"),
+("Cooking"),
+("Learning"),
+("Painting"),
+("Writing"),
+("Reading"),
+("Flying"),
+("Camping"),
+("Driving"),
+("Skydriving"),
+("Swimming"),
+("Running"),
+("Gamming"),
+("Drawing"),
+("Slacklining");
+
+--  Insert multiple data in employee table.
+INSERT INTO employee.employee(first_name,last_name,age,mobile_number,address) 
+VALUES
+("Ritu","Shah",29,9898457525,"Jamnagar"),
+("Zalak","Mahera",25,9885697525,"Surat"),
+("Sanvika","Maheta" ,31,8140309847,"Rajkot" ),
+("Hitanshi","Kshatriy",23,8787475821,"Junagadh"),
+("Kush","Sawlani",24,8782654652,"Vadodara"),
+("Daksh","Bhavsar",20,9157001634,"Mehsana"),
+("Sejal","Solanki",25,7898457525,"Vadodara"),
+("Rinkal","Parmar",28,9845752585,"Botad"),
+("Twinkle","Nehate",27,7484575255,"Valsad"),
+("Dhruv","Patel",23,9898457525,"Navsari");
+
+-- Insert multiple data in employee_salary table.
+INSERT INTO employee.employee_salary(employee_id,salary,date)
+VALUES
+(1,5000,"2024-01-15 08:55:12"),
+(2,50000,"2024-02-21 05:25:34"),
+(3,60000,"2024-03-25 12:05:22"),
+(4,80000,"2024-04-22 02:45:30"),
+(5,45000,"2024-10-15 07:40:20"),
+(6,15000,"2024-02-01 04:15:45"),
+(7,6000,"2024-04-18 06:55:12"),
+(8,68000,"2024-05-08 06:55:12"),
+(9,77000,"2024-08-16 06:55:12"),
+(10,85000,"2024-07-16 06:55:12");
+
+-- Insert multiple data in employee_hobby table
+INSERT INTO employee.employee_hobby(employee_id,hobby_id)
+VALUE
+(1,11),
+(2,12),
+(3,13),
+(4,14),
+(5,15),
+(6,16),
+(7,17),
+(8,18),
+(9,19),
+(10,20);
+
+-- select all tables.
+select * from employee.employee;
+select * from employee.hobby;
+select * from employee.employee_hobby;
+select * from employee.employee_salary;
+    
+--  Update data of employee table
+UPDATE employee.employee SET first_name = 'Rina' WHERE id = 1;    
+UPDATE employee.employee SET age = 26 WHERE first_name = 'Hitanshi';    
+UPDATE employee.employee SET mobile_number = '7474747474' WHERE id = 4;
+SELECT * FROM employee.employee;
+
+-- Update data of employee_hobby table
+UPDATE employee.employee_hobby SET hobby_id = 15 WHERE id = 2;
+UPDATE employee.employee_hobby SET hobby_id = 20 WHERE id = 5;
+    
+-- Update data of employee_salary table
+UPDATE employee.employee_salary SET  salary = 22000 WHERE id = 4;
+UPDATE employee.employee_salary SET salary = 51000 WHERE id = 7;
+UPDATE employee.employee_salary SET employee_id = 5 WHERE id = 2;
+    
+ -- Update data of hobby table
+UPDATE employee.hobby SET name = 'Nail art' WHERE id = 2;
+UPDATE employee.hobby SET name = 'Dancing' WHERE id = 5;
+    
+-- Delete record of Employee table
+DELETE FROM employee.employee WHERE id = 3;
+DELETE FROM employee.employee WHERE id between 6 and 12;
+SELECT * FROM employee.employee;
+
+--  Delete record of Employee_hobby table
+DELETE FROM employee.employee_hobby WHERE id = 3;   
+DELETE FROM employee.employee_hobby WHERE id = 5;
+SELECT * FROM employee.employee_hobby;
+ 
+--  Delete record of Employee_salary table
+DELETE FROM employee.employee_salary WHERE  id = 3;   
+DELETE FROM employee.employee_salary WHERE id = 5;   
+SELECT * FROM employee.employee_salary;
+  
+--  Delete  record of hobby table
+DELETE FROM employee.hobby WHERE id = 5;    
+DELETE FROM employee.hobby WHERE id = 3;
+SELECT * FROM employee.hobby;
+    
+-- Truncate employee tables
+TRUNCATE TABLE employee.employee;
+
+-- Truncate employee_hobby table
+TRUNCATE TABLE employee.employee_hobby;
+
+-- TRUNCATE employee_salary table
+TRUNCATE TABLE employee.employee_salary;
+
+-- Truncate hobby table
+TRUNCATE TABLE employee.hobby;
+
+-- Create a separate select queries to get a hobby, employee, employee_salary, employee_hobby.
+
+SELECT * FROM employee.hobby;
+SELECT * FROM employee.employee;
+SELECT * FROM employee.employee_hobby;
+SELECT * FROM employee.employee_salary;
+
+-- Create a select single query to get all employee name, all hobby_name in single column
+
+SELECT 
+    CONCAT(first_name, ' ', last_name) AS NameAndHobby
+FROM
+    employee.employee 
+UNION 
+SELECT 
+    name
+FROM
+    employee.hobby;
+
+-- Create a select query to get employee name, his/her employee_salary
+
+SELECT 
+    CONCAT(e.first_name, ' ', e.last_name) 'Employee name',
+    es.salary 'Employee Salary'
+FROM
+    employee.employee_salary es
+        INNER JOIN
+    employee e ON e.id = es.employee_id;
+
+-- Create a select query to get employee name, total salary of employee, hobby name(comma-separated - you need to use subquery for hobby name).
+
+SELECT 
+    CONCAT(e.first_name, ' ', e.last_name) as Name,
+    SUM(es.salary) AS TotalSalary,
+    (SELECT 
+            GROUP_CONCAT(h.name)
+        FROM
+            employee_hobby eh
+                JOIN
+            employee.hobby h ON eh.hobby_id = h.id
+        WHERE
+            eh.employee_id = e.id) AS HobbyName
+FROM
+    employee.employee e
+        LEFT JOIN
+    employee.employee_salary es ON es.employee_id = e.id
+GROUP BY e.id order by Name;
